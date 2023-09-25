@@ -2,6 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
+If you have downloaded this repo..then make sure to install json server from npm using  npm i json server
+then in the package.json file write your scripts like this "server": "json-server --watch data/questions.json --port 7000" //you can give your optional port
+
 ## Available Scripts
 
 In the project directory, you can run:
