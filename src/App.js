@@ -44,6 +44,10 @@ const reducer = (state, action) => {
       return {
         ...state, index: state.index + 1, answer: null
       }
+    case 'skipQuestion':
+      return {
+        ...state, index: state.index + 1, answer: null
+      }
     case 'finished':
       return {
         ...state, status: 'finished', highScore: state.points > state.highScore ? state.points : state.highScore
@@ -58,6 +62,7 @@ const reducer = (state, action) => {
         ...state, timeRemaining: state.timeRemaining - 1,
         status: state.timeRemaining === 0 ? 'finished' : state.status
       }
+
     default:
       throw new Error('Action not defined')
   }
@@ -85,11 +90,14 @@ const App = () => {
         {status === "loading" && <Loader />}
         {status === "error" && <Error />}
         {status === "ready" && <StartScreen leng={noOfQuest} dispatch={dispatch} />}
-        {status === 'active' && (<><Progressbar index={index} point={points} totalPoints={totalPoints} noOfQuest={noOfQuest} answer={answer} />
-          <Questions question={questions[index]} dispatch={dispatch} answer={answer} index={index} totalPoints={totalPoints} /> </>)}
+        {status === 'active' &&
+          (<>
+            <Progressbar index={index} point={points} totalPoints={totalPoints} noOfQuest={noOfQuest} answer={answer} />
+            <Questions question={questions[index]} dispatch={dispatch} answer={answer} index={index} totalPoints={totalPoints} />
+          </>)}
         {status === 'finished' && <Finished points={points} totalPoints={totalPoints} highScore={highScore} dispatch={dispatch} />}
         {status === 'active' && <Timer dispatch={dispatch} timeRemainig={timeRemaining} />}
-        {status !== 'finished' && < NextButton dispatch={dispatch} answer={answer} index={index} noOfQuest={noOfQuest} />}
+        {status === 'active' && < NextButton dispatch={dispatch} answer={answer} index={index} noOfQuest={noOfQuest} />}
       </Main>
     </div>
   )
