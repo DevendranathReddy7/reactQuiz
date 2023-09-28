@@ -17,6 +17,9 @@ const intitalState = {
   answer: null,
   points: 0, highScore: 0,
   timeRemaining: null,
+  questionsSkipped: 0,
+  correctlyAnswered: 0,
+  inCorrectlyAnswered: 0
 
 }
 
@@ -37,7 +40,10 @@ const reducer = (state, action) => {
     case 'newAnswer':
       const question = state.questions.at(state.index)
       return {
-        ...state, answer: action.payload, points: action.payload === question.correctOption ? state.points + question.points : state.points
+        ...state, answer: action.payload, points: action.payload === question.correctOption ? state.points + question.points : state.points,
+        correctlyAnswered: action.payload === question.correctOption ? state.correctlyAnswered + 1 : state.correctlyAnswered,
+        inCorrectlyAnswered: action.payload !== question.correctOption ? state.inCorrectlyAnswered + 1 : state.inCorrectlyAnswered
+
       }
 
     case 'nextQuestion':
@@ -46,7 +52,7 @@ const reducer = (state, action) => {
       }
     case 'skipQuestion':
       return {
-        ...state, index: state.index + 1, answer: null
+        ...state, index: state.index + 1, answer: null, questionsSkipped: state.questionsSkipped + 1
       }
     case 'finished':
       return {
@@ -69,9 +75,8 @@ const reducer = (state, action) => {
 
 }
 
-
 const App = () => {
-  const [{ questions, status, index, answer, points, highScore, timeRemaining }, dispatch] = useReducer(reducer, intitalState)
+  const [{ questions, status, index, answer, points, highScore, timeRemaining, questionsSkipped, correctlyAnswered, inCorrectlyAnswered }, dispatch] = useReducer(reducer, intitalState)
   const noOfQuest = questions.length
   const totalPoints = questions.reduce((prev, cur) => prev + cur.points, 0)
 
@@ -95,7 +100,7 @@ const App = () => {
             <Progressbar index={index} point={points} totalPoints={totalPoints} noOfQuest={noOfQuest} answer={answer} />
             <Questions question={questions[index]} dispatch={dispatch} answer={answer} index={index} totalPoints={totalPoints} />
           </>)}
-        {status === 'finished' && <Finished points={points} totalPoints={totalPoints} highScore={highScore} dispatch={dispatch} />}
+        {status === 'finished' && <Finished points={points} totalPoints={totalPoints} highScore={highScore} dispatch={dispatch} questionsSkipped={questionsSkipped} correctlyAnswered={correctlyAnswered} inCorrectlyAnswered={inCorrectlyAnswered} />}
         {status === 'active' && <Timer dispatch={dispatch} timeRemainig={timeRemaining} />}
         {status === 'active' && < NextButton dispatch={dispatch} answer={answer} index={index} noOfQuest={noOfQuest} />}
       </Main>
